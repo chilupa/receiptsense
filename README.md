@@ -54,7 +54,7 @@ npm run dev
 
 ## 🌐 Try it Online
 
-[![Run on Repl.it](https://replit.com/badge/github/your-username/receipt-insights)](https://replit.com/@your-username/receipt-insights)
+[![Run on Repl.it](https://replit.com/badge/github/chilupa/receiptsense)](https://replit.com/chilupa/receiptsense)
 
 **One-click demo on Replit:**
 1. Click the Replit badge above
