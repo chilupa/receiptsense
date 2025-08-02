@@ -52,6 +52,17 @@ npm run dev
 
 6. **Upload receipts** and watch the AI-powered analysis in action! 🎉
 
+## 🌐 Try it Online
+
+[![Run on Repl.it](https://replit.com/badge/github/your-username/receipt-insights)](https://replit.com/@your-username/receipt-insights)
+
+**One-click demo on Replit:**
+1. Click the Replit badge above
+2. Wait for setup to complete (~30 seconds)
+3. Upload receipt images and explore the AI features!
+
+*Note: Replace `your-username` with your actual GitHub username*
+
 ## 🔌 API Endpoints
 
 - `POST /api/upload-receipt` - Process receipt with vector embeddings and event streaming
