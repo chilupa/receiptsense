@@ -8,7 +8,7 @@ export async function GET() {
     const receipts = [];
     
     for (const key of keys) {
-      const receiptData = await client.hGetAll(key);
+      const receiptData = await client.hGetAll(key) as Record<string, string>;
       if (receiptData.id) {
         try {
           receipts.push({

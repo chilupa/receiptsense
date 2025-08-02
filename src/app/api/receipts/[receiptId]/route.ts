@@ -10,7 +10,7 @@ export async function DELETE(
     const client = await getRedisClient();
     
     // Get receipt data to find associated items
-    const receiptData = await client.hGetAll(`receipt:${receiptId}`);
+    const receiptData = await client.hGetAll(`receipt:${receiptId}`) as Record<string, string>;
     
     if (!receiptData.id) {
       return NextResponse.json({ error: 'Receipt not found' }, { status: 404 });

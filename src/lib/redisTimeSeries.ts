@@ -10,7 +10,7 @@ export async function initItemTimeSeries(itemName: string) {
       RETENTION: 86400000, // 24 hours in milliseconds
       LABELS: { item: itemName, type: 'price' }
     });
-  } catch (error) {
+  } catch {
     // Time series might already exist, ignore error
     console.log(`Time series for ${itemName} already exists or created`);
   }
@@ -67,7 +67,7 @@ export async function getAveragePrice(itemName: string, hours: number = 24) {
     });
     
     return result.length > 0 ? result[0].value : null;
-  } catch (error) {
+  } catch {
     // Key doesn't exist yet
     return null;
   }
@@ -91,7 +91,7 @@ export async function getPriceStats(itemName: string, hours: number = 24) {
       max: maxResult.length > 0 ? maxResult[0].value : null,
       avg: avgResult.length > 0 ? avgResult[0].value : null
     };
-  } catch (error) {
+  } catch {
     // Key doesn't exist yet
     return { min: null, max: null, avg: null };
   }

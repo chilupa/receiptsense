@@ -1,7 +1,13 @@
 import { getRedisClient } from './redis';
 
 // Add receipt event to stream
-export async function addReceiptEvent(receiptId: string, storeName: string, items: any[], totalAmount: number) {
+interface ReceiptItem {
+  id: string;
+  name: string;
+  price: number;
+}
+
+export async function addReceiptEvent(receiptId: string, storeName: string, items: ReceiptItem[], totalAmount: number) {
   const client = await getRedisClient();
   
   try {

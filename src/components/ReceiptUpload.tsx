@@ -3,14 +3,26 @@
 import { useState } from "react";
 import Tesseract from "tesseract.js";
 
+interface ReceiptItem {
+  id: string;
+  name: string;
+  price: number;
+}
+
+interface ReceiptResult {
+  receiptId: string;
+  items: ReceiptItem[];
+  storeName: string;
+}
+
 export default function ReceiptUpload() {
   const [file, setFile] = useState<File | null>(null);
   const [storeName, setStoreName] = useState("");
   const [loading, setLoading] = useState(false);
-  const [result, setResult] = useState<any>(null);
+  const [result, setResult] = useState<ReceiptResult | null>(null);
   const [progress, setProgress] = useState("");
   const [editing, setEditing] = useState(false);
-  const [editedItems, setEditedItems] = useState<any[]>([]);
+  const [editedItems, setEditedItems] = useState<ReceiptItem[]>([]);
   const [editedStoreName, setEditedStoreName] = useState("");
 
   const handleUpload = async () => {
@@ -86,7 +98,7 @@ export default function ReceiptUpload() {
     }
   };
 
-  const updateItem = (index: number, field: string, value: any) => {
+  const updateItem = (index: number, field: keyof ReceiptItem, value: string | number) => {
     const updated = [...editedItems];
     updated[index] = { ...updated[index], [field]: value };
     setEditedItems(updated);
@@ -163,7 +175,7 @@ export default function ReceiptUpload() {
                   placeholder="Store name"
                   className="w-full px-2 py-1 border border-gray-300 rounded text-sm"
                 />
-                {editedItems.map((item: any, i: number) => (
+                {editedItems.map((item: ReceiptItem, i: number) => (
                   <div key={i} className="flex gap-2 items-center">
                     <input
                       type="text"
@@ -191,7 +203,7 @@ export default function ReceiptUpload() {
               <div>
                 <p className="text-green-700 mb-2">Store: {editedStoreName}</p>
                 <p className="text-green-700 mb-2">Found {editedItems.length} items</p>
-                {editedItems.map((item: any, i: number) => (
+                {editedItems.map((item: ReceiptItem, i: number) => (
                   <div key={i} className="text-sm text-green-600">
                     {item.name}: ${item.price.toFixed(2)}
                   </div>

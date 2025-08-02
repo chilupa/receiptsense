@@ -1,7 +1,14 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { getRedisClient } from '@/lib/redis';
 import { searchSimilarItems } from '@/lib/vectorSearch';
 import { getPriceTrend, getPriceStats } from '@/lib/redisTimeSeries';
+
+interface Item {
+  id: string;
+  name: string;
+  price: number;
+  storeName: string;
+  similarity?: number;
+}
 
 export async function GET(
   request: NextRequest,
@@ -21,13 +28,13 @@ export async function GET(
     // Items are already processed from vector search
     const items = similarItems;
     
-    const prices = items.map(item => item.price);
-    const avgPrice = prices.reduce((a, b) => a + b, 0) / prices.length;
+    const prices = items.map((item: Item) => item.price);
+    const avgPrice = prices.reduce((a: number, b: number) => a + b, 0) / prices.length;
     const minPrice = Math.min(...prices);
     const maxPrice = Math.max(...prices);
     
     const storeComparison: { [key: string]: number[] } = {};
-    items.forEach(item => {
+    items.forEach((item: Item) => {
       if (!storeComparison[item.storeName]) {
         storeComparison[item.storeName] = [];
       }
@@ -90,9 +97,9 @@ export async function GET(
     }
     
     // 4. Similarity and alternatives
-    const highSimilarityItems = items.filter(item => item.similarity && item.similarity > 0.8);
+    const highSimilarityItems = items.filter((item: Item) => item.similarity && item.similarity > 0.8);
     if (highSimilarityItems.length > 3) {
-      const avgSimilarPrice = highSimilarityItems.reduce((sum, item) => sum + item.price, 0) / highSimilarityItems.length;
+      const avgSimilarPrice = highSimilarityItems.reduce((sum: number, item: Item) => sum + item.price, 0) / highSimilarityItems.length;
       recommendations.push({
         type: 'alternatives',
         message: `Found ${highSimilarityItems.length} similar items averaging $${avgSimilarPrice.toFixed(2)}`,
@@ -101,7 +108,7 @@ export async function GET(
     }
     
     // 5. Cheapest option with context
-    const cheapestItem = items.reduce((min, item) => item.price < min.price ? item : min);
+    const cheapestItem = items.reduce((min: Item, item: Item) => item.price < min.price ? item : min);
     if (cheapestItem.price < avgPrice * 0.85) {
       const savingsPercent = ((avgPrice - cheapestItem.price) / avgPrice) * 100;
       recommendations.push({

@@ -12,7 +12,7 @@ export async function PUT(
     const client = await getRedisClient();
     
     // Get existing receipt
-    const receiptData = await client.hGetAll(`receipt:${receiptId}`);
+    const receiptData = await client.hGetAll(`receipt:${receiptId}`) as Record<string, string>;
     if (!receiptData.id) {
       return NextResponse.json({ error: 'Receipt not found' }, { status: 404 });
     }
