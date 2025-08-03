@@ -7,7 +7,7 @@ interface Item {
   name: string;
   price: number;
   storeName: string;
-  similarity?: number;
+  similarity: number;
 }
 
 export async function GET(

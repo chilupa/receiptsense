@@ -3,8 +3,7 @@ import { createClient } from 'redis';
 const client = createClient({
   url: process.env.REDIS_URL || 'redis://localhost:6379',
   socket: {
-    connectTimeout: 5000,
-    lazyConnect: true
+    connectTimeout: 5000
   }
 });
 
@@ -22,7 +21,7 @@ export async function getRedisClient() {
       isConnected = true;
       console.log('✅ Redis connected successfully');
     } catch (error) {
-      console.log('❌ Redis connection failed:', error.message);
+      console.log('❌ Redis connection failed:', (error as Error).message);
       console.log('⚠️  App will run without Redis features');
       // Return a mock client that doesn't crash the app
       return createMockRedisClient();

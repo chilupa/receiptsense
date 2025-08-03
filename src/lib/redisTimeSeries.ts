@@ -31,8 +31,8 @@ export async function addPricePoint(itemName: string, price: number, storeName: 
     });
     
     console.log(`Added price point for ${itemName}: $${price} at ${storeName}`);
-  } catch (error) {
-    console.error('Failed to add price point:', error);
+  } catch (err) {
+    console.error('Failed to add price point:', err);
   }
 }
 
@@ -49,7 +49,7 @@ export async function getPriceTrend(itemName: string, hours: number = 24) {
       price: point.value,
       date: new Date(point.timestamp)
     }));
-  } catch (error) {
+  } catch {
     // Key doesn't exist yet, return empty array
     return [];
   }
@@ -63,7 +63,7 @@ export async function getAveragePrice(itemName: string, hours: number = 24) {
   
   try {
     const result = await client.ts.range(key, fromTime, '+', {
-      AGGREGATION: { type: 'avg', timeBucket: hours * 60 * 60 * 1000 }
+      AGGREGATION: { type: 'AVG', timeBucket: hours * 60 * 60 * 1000 }
     });
     
     return result.length > 0 ? result[0].value : null;
@@ -81,9 +81,9 @@ export async function getPriceStats(itemName: string, hours: number = 24) {
   
   try {
     const [minResult, maxResult, avgResult] = await Promise.all([
-      client.ts.range(key, fromTime, '+', { AGGREGATION: { type: 'min', timeBucket: hours * 60 * 60 * 1000 } }),
-      client.ts.range(key, fromTime, '+', { AGGREGATION: { type: 'max', timeBucket: hours * 60 * 60 * 1000 } }),
-      client.ts.range(key, fromTime, '+', { AGGREGATION: { type: 'avg', timeBucket: hours * 60 * 60 * 1000 } })
+      client.ts.range(key, fromTime, '+', { AGGREGATION: { type: 'MIN', timeBucket: hours * 60 * 60 * 1000 } }),
+      client.ts.range(key, fromTime, '+', { AGGREGATION: { type: 'MAX', timeBucket: hours * 60 * 60 * 1000 } }),
+      client.ts.range(key, fromTime, '+', { AGGREGATION: { type: 'AVG', timeBucket: hours * 60 * 60 * 1000 } })
     ]);
     
     return {

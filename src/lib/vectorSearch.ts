@@ -1,5 +1,19 @@
 import { getRedisClient } from './redis';
 
+interface SearchDocument {
+  id: string;
+  value: {
+    name: string;
+    price: string;
+    store: string;
+    __vector_score: string;
+  };
+}
+
+interface SearchResults {
+  documents: SearchDocument[];
+}
+
 // Simple embedding function for item names
 export function createEmbedding(text: string): number[] {
   const words = text.toLowerCase().replace(/[^\w\s]/g, '').split(/\s+/);
@@ -27,7 +41,7 @@ export async function initializeVectorIndex() {
     // Check if index already exists
     await client.ft.info('item_idx');
     console.log('Vector index already exists');
-  } catch (error) {
+  } catch {
     // Create the index if it doesn't exist
     try {
       await client.ft.create('item_idx', {
@@ -83,15 +97,16 @@ export async function searchSimilarItems(itemName: string, limit: number = 10) {
       LIMIT: { from: 0, size: limit }
     });
     
-    return results.documents.map(doc => ({
+    const searchResults = results as SearchResults;
+    return searchResults?.documents?.map(doc => ({
       id: doc.id.replace('item:', ''),
       name: doc.value.name as string,
       price: parseFloat(doc.value.price as string),
       storeName: doc.value.store as string,
       similarity: 1 - parseFloat(doc.value.__vector_score as string) // Convert distance to similarity
-    }));
-  } catch (error) {
-    console.error('Vector search failed:', error);
+    })) || [];
+  } catch (err) {
+    console.error('Vector search failed:', err);
     return [];
   }
 }
