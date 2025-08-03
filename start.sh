@@ -2,9 +2,15 @@
 
 echo "🧾 Starting Receipt-to-Insights App..."
 
-# Check if Redis is running
-if ! redis-cli ping > /dev/null 2>&1; then
-    echo "Starting Redis Stack with Docker..."
+# Check if Redis container exists and is running
+if docker ps -q -f name=receipt-redis > /dev/null; then
+    echo "✅ Redis Stack is already running"
+elif docker ps -aq -f name=receipt-redis > /dev/null; then
+    echo "🔄 Starting existing Redis container..."
+    docker start receipt-redis
+    sleep 3
+else
+    echo "🚀 Starting new Redis Stack container..."
     docker run -d --name receipt-redis -p 6379:6379 redis/redis-stack:latest
     sleep 5
 fi
