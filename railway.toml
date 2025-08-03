@@ -1,0 +1,13 @@
+[build]
+builder = "nixpacks"
+
+[deploy]
+startCommand = "npm start"
+healthcheckPath = "/"
+
+[[services]]
+name = "app"
+
+[[services]]
+name = "redis"
+image = "redis/redis-stack:latest"

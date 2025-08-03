@@ -1,0 +1,16 @@
+{
+  "build": {
+    "builder": "NIXPACKS"
+  },
+  "deploy": {
+    "startCommand": "npm start",
+    "healthcheckPath": "/"
+  },
+  "services": [
+    {
+      "name": "redis",
+      "image": "redis/redis-stack:latest",
+      "port": 6379
+    }
+  ]
+}
