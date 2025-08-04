@@ -59,12 +59,25 @@ export async function getRedisClient() {
 // Check if Redis Stack modules are available
 async function checkRedisStackCapabilities(client: ReturnType<typeof createClient>) {
   try {
-    // Try a simple FT command to check if Search module exists
-    await client.sendCommand(['FT._LIST']);
+    // Try JSON.GET command (Redis Stack JSON module)
+    await client.sendCommand(['JSON.GET', 'test-key', '$']);
     return true;
-  } catch {
-    console.log('Redis Stack modules not detected');
-    return false;
+  } catch (error: any) {
+    // If error is about missing key, JSON module exists
+    if (error.message?.includes('could not perform this operation on a key that doesn\'t exist') || 
+        error.message?.includes('ERR no such key')) {
+      console.log('✅ Redis Stack JSON module detected');
+      return true;
+    }
+    
+    try {
+      // Try FT._LIST command (Redis Stack Search module)
+      await client.sendCommand(['FT._LIST']);
+      return true;
+    } catch {
+      console.log('Redis Stack modules not detected - using fallback');
+      return false;
+    }
   }
 }
 
