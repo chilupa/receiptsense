@@ -12,7 +12,8 @@ const client = createClient({
   url: redisUrl,
   socket: {
     connectTimeout: 10000,
-    reconnectStrategy: (retries) => Math.min(retries * 50, 1000)
+    reconnectStrategy: (retries) => Math.min(retries * 50, 1000),
+    ...(redisUrl.includes('upstash.io') && { tls: true })
   }
 });
 
@@ -56,7 +57,7 @@ export async function getRedisClient() {
 }
 
 // Check if Redis Stack modules are available
-async function checkRedisStackCapabilities(client: any) {
+async function checkRedisStackCapabilities(client: ReturnType<typeof createClient>) {
   try {
     // Try a simple FT command to check if Search module exists
     await client.sendCommand(['FT._LIST']);
@@ -68,15 +69,15 @@ async function checkRedisStackCapabilities(client: any) {
 }
 
 // Enhanced Redis client that wraps basic Redis with Stack-like methods
-function createEnhancedRedisClient(basicClient: any) {
+function createEnhancedRedisClient(basicClient: ReturnType<typeof createClient>) {
   return {
     ...basicClient,
     json: {
-      set: async (key: string, path: string, value: any) => {
+      set: async (key: string, path: string, value: unknown) => {
         // Fallback to regular hash storage
         return await basicClient.hSet(key, 'data', JSON.stringify(value));
       },
-      get: async (key: string, path?: string) => {
+      get: async (key: string) => {
         try {
           const data = await basicClient.hGet(key, 'data');
           return data ? JSON.parse(data) : null;
