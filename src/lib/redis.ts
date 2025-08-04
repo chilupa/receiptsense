@@ -60,19 +60,13 @@ export async function getRedisClient() {
 // Check if Redis Stack modules are available
 async function checkRedisStackCapabilities(client: ReturnType<typeof createClient>) {
   try {
-    // Try MODULE LIST command to check available modules
-    const modules = await client.sendCommand(['MODULE', 'LIST']);
-    console.log('Available modules:', modules);
+    // If MODULE LIST works, Redis Stack is available
+    await client.sendCommand(['MODULE', 'LIST']);
+    console.log('✅ Redis Stack modules available');
     return true;
   } catch {
-    try {
-      // Try a simple JSON command
-      await client.sendCommand(['JSON.TYPE', 'nonexistent']);
-      return true;
-    } catch {
-      console.log('Redis Stack modules not detected - using fallback');
-      return false;
-    }
+    console.log('Redis Stack modules not detected - using fallback');
+    return false;
   }
 }
 

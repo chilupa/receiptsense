@@ -30,8 +30,6 @@ export async function GET(
     
     const prices = items.map((item: Item) => item.price);
     const avgPrice = prices.reduce((a: number, b: number) => a + b, 0) / prices.length;
-    const minPrice = Math.min(...prices);
-    const maxPrice = Math.max(...prices);
     
     const storeComparison: { [key: string]: number[] } = {};
     items.forEach((item: Item) => {
@@ -46,6 +44,11 @@ export async function GET(
       avgPrice: prices.reduce((a, b) => a + b, 0) / prices.length,
       count: prices.length
     }));
+    
+    // Calculate min/max from store averages, not individual items
+    const storeAvgPrices = storeAverages.map(s => s.avgPrice);
+    const minPrice = Math.min(...storeAvgPrices);
+    const maxPrice = Math.max(...storeAvgPrices);
     
     const recommendations = [];
     
