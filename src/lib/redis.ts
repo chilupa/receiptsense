@@ -39,6 +39,7 @@ export async function getRedisClient() {
       }
       
       console.log('✅ Redis Stack modules available');
+      return client;
       
     } catch (error) {
       console.error('❌ Redis connection failed:', (error as Error).message);
@@ -59,20 +60,14 @@ export async function getRedisClient() {
 // Check if Redis Stack modules are available
 async function checkRedisStackCapabilities(client: ReturnType<typeof createClient>) {
   try {
-    // Try JSON.GET command (Redis Stack JSON module)
-    await client.sendCommand(['JSON.GET', 'test-key', '$']);
+    // Try MODULE LIST command to check available modules
+    const modules = await client.sendCommand(['MODULE', 'LIST']);
+    console.log('Available modules:', modules);
     return true;
-  } catch (error) {
-    // If error is about missing key, JSON module exists
-    if ((error as Error).message?.includes('could not perform this operation on a key that doesn\'t exist') || 
-        (error as Error).message?.includes('ERR no such key')) {
-      console.log('✅ Redis Stack JSON module detected');
-      return true;
-    }
-    
+  } catch {
     try {
-      // Try FT._LIST command (Redis Stack Search module)
-      await client.sendCommand(['FT._LIST']);
+      // Try a simple JSON command
+      await client.sendCommand(['JSON.TYPE', 'nonexistent']);
       return true;
     } catch {
       console.log('Redis Stack modules not detected - using fallback');
@@ -83,33 +78,50 @@ async function checkRedisStackCapabilities(client: ReturnType<typeof createClien
 
 // Enhanced Redis client that wraps basic Redis with Stack-like methods
 function createEnhancedRedisClient(basicClient: ReturnType<typeof createClient>) {
-  return {
-    ...basicClient,
+  const enhancedClient = basicClient as ReturnType<typeof createClient> & {
     json: {
-      set: async (key: string, path: string, value: unknown) => {
-        // Fallback to regular hash storage
-        return await basicClient.hSet(key, 'data', JSON.stringify(value));
-      },
-      get: async (key: string) => {
-        try {
-          const data = await basicClient.hGet(key, 'data');
-          return data ? JSON.parse(data) : null;
-        } catch {
-          return null;
-        }
-      }
-    },
+      set: (key: string, path: string, value: unknown) => Promise<string>;
+      get: (key: string) => Promise<unknown>;
+    };
     ft: {
-      search: async () => ({ documents: [] }),
-      create: async () => 'OK',
-      info: async () => ({})
-    },
+      search: () => Promise<{ documents: unknown[] }>;
+      create: () => Promise<string>;
+      info: () => Promise<Record<string, unknown>>;
+    };
     ts: {
-      create: async () => 'OK',
-      add: async () => 'OK',
-      range: async () => []
+      create: () => Promise<string>;
+      add: () => Promise<string>;
+      range: () => Promise<unknown[]>;
+    };
+  };
+  
+  enhancedClient.json = {
+    set: async (key: string, path: string, value: unknown) => {
+      return await basicClient.hSet(key, 'data', JSON.stringify(value));
+    },
+    get: async (key: string) => {
+      try {
+        const data = await basicClient.hGet(key, 'data');
+        return data ? JSON.parse(data) : null;
+      } catch {
+        return null;
+      }
     }
   };
+  
+  enhancedClient.ft = {
+    search: async () => ({ documents: [] }),
+    create: async () => 'OK',
+    info: async () => ({})
+  };
+  
+  enhancedClient.ts = {
+    create: async () => 'OK',
+    add: async () => 'OK',
+    range: async () => []
+  };
+  
+  return enhancedClient;
 }
 
 // Mock Redis client for when Redis is not available
