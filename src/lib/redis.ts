@@ -62,10 +62,10 @@ async function checkRedisStackCapabilities(client: ReturnType<typeof createClien
     // Try JSON.GET command (Redis Stack JSON module)
     await client.sendCommand(['JSON.GET', 'test-key', '$']);
     return true;
-  } catch (error: any) {
+  } catch (error) {
     // If error is about missing key, JSON module exists
-    if (error.message?.includes('could not perform this operation on a key that doesn\'t exist') || 
-        error.message?.includes('ERR no such key')) {
+    if ((error as Error).message?.includes('could not perform this operation on a key that doesn\'t exist') || 
+        (error as Error).message?.includes('ERR no such key')) {
       console.log('✅ Redis Stack JSON module detected');
       return true;
     }
