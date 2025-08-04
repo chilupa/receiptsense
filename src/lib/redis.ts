@@ -1,10 +1,6 @@
 import { createClient } from 'redis';
 
-// Railway-specific Redis URL handling
-const redisUrl = process.env.REDIS_URL || 
-                process.env.REDIS_PRIVATE_URL || 
-                process.env.REDIS_PUBLIC_URL || 
-                'redis://localhost:6379';
+const redisUrl = process.env.REDIS_URL || 'redis://localhost:6379';
 
 console.log('Using Redis URL:', redisUrl.replace(/\/\/.*@/, '//***@')); // Hide credentials
 
@@ -13,7 +9,7 @@ const client = createClient({
   socket: {
     connectTimeout: 10000,
     reconnectStrategy: (retries) => Math.min(retries * 50, 1000),
-    ...(redisUrl.includes('upstash.io') && { tls: true })
+...(redisUrl.includes('redis-cloud.com') && { tls: true })
   }
 });
 
