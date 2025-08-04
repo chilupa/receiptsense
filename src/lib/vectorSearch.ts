@@ -98,13 +98,18 @@ export async function searchSimilarItems(itemName: string, limit: number = 10) {
     });
     
     const searchResults = results as SearchResults;
-    return searchResults?.documents?.map(doc => ({
+    const allItems = searchResults?.documents?.map(doc => ({
       id: doc.id.replace('item:', ''),
       name: doc.value.name as string,
       price: parseFloat(doc.value.price as string),
       storeName: doc.value.store as string,
       similarity: 1 - parseFloat(doc.value.__vector_score as string) // Convert distance to similarity
     })) || [];
+    
+    const filteredItems = allItems.filter(item => item.price > 0);
+    console.log(`[DEBUG] Vector search: ${allItems.length} total, ${filteredItems.length} after filtering out $0 items`);
+    
+    return filteredItems;
   } catch (err) {
     console.error('Vector search failed:', err);
     return [];

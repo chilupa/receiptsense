@@ -21,12 +21,21 @@ export async function GET(
     // Use vector search to find similar items
     const similarItems = await searchSimilarItems(itemName, 50);
     
+    console.log(`[DEBUG] Search for "${itemName}" returned ${similarItems.length} items`);
+    console.log('[DEBUG] First 3 items:', similarItems.slice(0, 3));
+    
     if (similarItems.length === 0) {
       return NextResponse.json({ message: 'No similar items found' });
     }
     
     // Items are already processed from vector search
     const items = similarItems;
+    
+    console.log('[DEBUG] Price range in items:', {
+      prices: items.map(i => i.price),
+      min: Math.min(...items.map(i => i.price)),
+      max: Math.max(...items.map(i => i.price))
+    });
     
     const prices = items.map((item: Item) => item.price);
     const avgPrice = prices.reduce((a: number, b: number) => a + b, 0) / prices.length;
