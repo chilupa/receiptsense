@@ -2,6 +2,10 @@
 
 An intelligent receipt analysis application that leverages **Redis 8** and **Redis Stack** to provide advanced price comparison, vector-based item similarity search, and real-time analytics across different stores.
 
+## 🌐 Live Demo
+
+**Project is live here:** [https://receiptsense-7xs904ful-pavans-projects-6bd26b7a.vercel.app/](https://receiptsense-7xs904ful-pavans-projects-6bd26b7a.vercel.app/)
+
 ## 🚀 Project Overview
 
 This Next.js application transforms receipt data into actionable insights using cutting-edge database technologies. By combining OCR processing with Redis Stack's advanced modules, it delivers:
