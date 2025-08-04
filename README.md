@@ -4,7 +4,7 @@ An intelligent receipt analysis application that leverages **Redis 8** and **Red
 
 ## 🌐 Live Demo
 
-**Project is live here:** [https://receiptsense-7xs904ful-pavans-projects-6bd26b7a.vercel.app/](https://receiptsense-7xs904ful-pavans-projects-6bd26b7a.vercel.app/)
+**Project is live here:** [receiptsense.vercel.app](https://receiptsense-7xs904ful-pavans-projects-6bd26b7a.vercel.app/)
 
 ## 🚀 Project Overview
 
@@ -28,6 +28,7 @@ This Next.js application transforms receipt data into actionable insights using 
 ## 🏗️ Architecture
 
 ### Data Flow
+
 1. **Receipt Upload** → OCR Processing (Tesseract.js)
 2. **Item Extraction** → Vector Embedding Generation
 3. **Redis Storage** → JSON documents with vector indices
@@ -35,10 +36,10 @@ This Next.js application transforms receipt data into actionable insights using 
 5. **Price Analysis** → Statistical comparison across stores
 6. **Recommendations** → Real-time insights and savings suggestions
 
-
 ## 🚀 Getting Started
 
 ### Prerequisites
+
 - Node.js 18.18+ or 20+
 - Redis Cloud account with Redis Stack enabled
 
@@ -68,18 +69,21 @@ npm run build  # Build for production
 ## 📊 Features Deep Dive
 
 ### Vector Similarity Search
+
 - **128-dimensional embeddings** for item names
 - **Cosine similarity** for finding related products
 - **KNN search** with configurable result limits
 - **Automatic filtering** of zero-price items
 
 ### Price Analysis Engine
+
 - **Store comparison** with statistical insights
 - **Price volatility detection** (>30% variation alerts)
 - **Savings recommendations** based on historical data
 - **Trend analysis** using time series data
 
 ### Smart Recommendations
+
 - **Overpaid alerts** (>15% above average)
 - **Good deal detection** (>10% below average)
 - **Store recommendations** based on price performance
@@ -88,11 +92,13 @@ npm run build  # Build for production
 ## 🚀 Deployment
 
 ### Vercel (Recommended)
+
 1. Connect repository to Vercel
 2. Configure environment variables
 3. Deploy with automatic Redis Stack detection
 
 ### Environment Variables
+
 - `REDIS_URL`: Redis Cloud connection string with Redis Stack
 - `NODE_ENV`: Production environment flag
 
@@ -106,13 +112,13 @@ npm run build  # Build for production
 
 ## 🔍 API Endpoints
 
-| Endpoint | Method | Description |
-|----------|--------|-------------|
-| `/api/upload-receipt` | POST | Upload and OCR process receipts |
-| `/api/receipts` | GET | Retrieve all stored receipts |
-| `/api/receipts/[id]` | GET | Get specific receipt details |
-| `/api/receipts/[id]/edit` | PUT | Update receipt information |
-| `/api/price-comparison/[itemName]` | GET | Vector search and price analysis |
+| Endpoint                           | Method | Description                      |
+| ---------------------------------- | ------ | -------------------------------- |
+| `/api/upload-receipt`              | POST   | Upload and OCR process receipts  |
+| `/api/receipts`                    | GET    | Retrieve all stored receipts     |
+| `/api/receipts/[id]`               | GET    | Get specific receipt details     |
+| `/api/receipts/[id]/edit`          | PUT    | Update receipt information       |
+| `/api/price-comparison/[itemName]` | GET    | Vector search and price analysis |
 
 ## 🤝 Contributing
 
