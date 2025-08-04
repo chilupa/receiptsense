@@ -78,50 +78,33 @@ async function checkRedisStackCapabilities(client: ReturnType<typeof createClien
 
 // Enhanced Redis client that wraps basic Redis with Stack-like methods
 function createEnhancedRedisClient(basicClient: ReturnType<typeof createClient>) {
-  const enhancedClient = basicClient as ReturnType<typeof createClient> & {
+  return {
+    ...basicClient,
     json: {
-      set: (key: string, path: string, value: unknown) => Promise<string>;
-      get: (key: string) => Promise<unknown>;
-    };
-    ft: {
-      search: () => Promise<{ documents: unknown[] }>;
-      create: () => Promise<string>;
-      info: () => Promise<Record<string, unknown>>;
-    };
-    ts: {
-      create: () => Promise<string>;
-      add: () => Promise<string>;
-      range: () => Promise<unknown[]>;
-    };
-  };
-  
-  enhancedClient.json = {
-    set: async (key: string, path: string, value: unknown) => {
-      return await basicClient.hSet(key, 'data', JSON.stringify(value));
-    },
-    get: async (key: string) => {
-      try {
-        const data = await basicClient.hGet(key, 'data');
-        return data ? JSON.parse(data) : null;
-      } catch {
-        return null;
+      set: async (key: string, path: string, value: unknown) => {
+        await basicClient.hSet(key, 'data', JSON.stringify(value));
+        return 'OK';
+      },
+      get: async (key: string) => {
+        try {
+          const data = await basicClient.hGet(key, 'data');
+          return data ? JSON.parse(data) : null;
+        } catch {
+          return null;
+        }
       }
+    },
+    ft: {
+      search: async () => ({ documents: [] }),
+      create: async () => 'OK',
+      info: async () => ({})
+    },
+    ts: {
+      create: async () => 'OK',
+      add: async () => 'OK',
+      range: async () => []
     }
   };
-  
-  enhancedClient.ft = {
-    search: async () => ({ documents: [] }),
-    create: async () => 'OK',
-    info: async () => ({})
-  };
-  
-  enhancedClient.ts = {
-    create: async () => 'OK',
-    add: async () => 'OK',
-    range: async () => []
-  };
-  
-  return enhancedClient;
 }
 
 // Mock Redis client for when Redis is not available
