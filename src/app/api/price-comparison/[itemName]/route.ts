@@ -110,14 +110,16 @@ export async function GET(
       });
     }
     
-    // 5. Cheapest option with context
-    const cheapestItem = items.reduce((min: Item, item: Item) => item.price < min.price ? item : min);
-    if (cheapestItem.price < avgPrice * 0.85) {
-      const savingsPercent = ((avgPrice - cheapestItem.price) / avgPrice) * 100;
+    // 5. Cheapest store option with context
+    const cheapestStore = storeAverages.reduce((min, store) => 
+      store.avgPrice < min.avgPrice ? store : min
+    );
+    if (cheapestStore.avgPrice < avgPrice * 0.85) {
+      const savingsPercent = ((avgPrice - cheapestStore.avgPrice) / avgPrice) * 100;
       recommendations.push({
         type: 'best_deal',
-        message: `Best deal: ${cheapestItem.storeName} at $${cheapestItem.price.toFixed(2)} (${savingsPercent.toFixed(1)}% below average)`,
-        savings: avgPrice - cheapestItem.price
+        message: `Best deal: ${cheapestStore.store} at $${cheapestStore.avgPrice.toFixed(2)} (${savingsPercent.toFixed(1)}% below average)`,
+        savings: avgPrice - cheapestStore.avgPrice
       });
     }
     
