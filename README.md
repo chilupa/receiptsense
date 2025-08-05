@@ -4,7 +4,7 @@ An intelligent receipt analysis application that leverages **Redis 8** and **Red
 
 ## 🌐 Live Demo
 
-**Project is live here:** [receiptsense.vercel.app](https://receiptsense-7xs904ful-pavans-projects-6bd26b7a.vercel.app/)
+**Project is live here:** [receiptsense.vercel.app](https://receiptsense.vercel.app/)
 
 ## 🚀 Project Overview
 
